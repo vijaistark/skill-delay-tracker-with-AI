@@ -1,4 +1,6 @@
 from django.urls import path
+from django.http import JsonResponse
+
 from .views import (
     register_user,
     login_user,
@@ -10,7 +12,17 @@ from .views import (
     recommendations,
 )
 
+
+def home(request):
+    return JsonResponse({
+        "message": "Skill Decay Tracker API is running",
+        "status": "success"
+    })
+
+
 urlpatterns = [
+    path('', home, name='home'),
+
     path('api/register/', register_user, name='register_user'),
     path('api/login/', login_user, name='login_user'),
     path('api/skills/', SkillListCreateView.as_view(), name='skill-list-create'),
