@@ -16,14 +16,24 @@ async function request(endpoint, options = {}) {
     config.body = JSON.stringify(config.body);
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, config);
-  const data = await response.json().catch(() => ({}));
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, config);
+    const contentType = response.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
+    const data = isJson ? await response.json().catch(() => ({})) : await response.text().catch(() => '');
 
-  if (!response.ok) {
-    throw new Error(data.error || data.detail || 'Request failed.');
+    if (!response.ok) {
+      const message = data?.error || data?.detail || data?.message || (typeof data === 'string' && data) || 'Request failed.';
+      throw new Error(message);
+    }
+
+    return data;
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error('Unable to reach the backend. Check the backend URL and CORS configuration.');
+    }
+    throw error;
   }
-
-  return data;
 }
 
 export const api = {
