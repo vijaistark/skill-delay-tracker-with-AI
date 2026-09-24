@@ -9,7 +9,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
-ALLOWED_HOSTS = ['*']
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+    '.vercel.app',
+    'skill-delay-tracker-with-ai.vercel.app',
+    'skilldelaytracker.vercel.app',
+]
+
+if os.getenv('VERCEL_URL'):
+    ALLOWED_HOSTS.append(os.getenv('VERCEL_URL').strip())
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -97,11 +108,13 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': __import__('datetime').timedelta(days=1),
 }
 
-FRONTEND_URL = os.getenv('FRONTEND_URL', '').strip()
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://skill-delay-tracker-with-ai.vercel.app').strip()
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'https://skill-delay-tracker-with-ai.vercel.app',
+    'https://skilldelaytracker.vercel.app',
 ]
 if FRONTEND_URL:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
@@ -113,7 +126,8 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
-    'https://*.vercel.app',
+    'https://skill-delay-tracker-with-ai.vercel.app',
+    'https://skilldelaytracker.vercel.app',
 ]
 if FRONTEND_URL:
     CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL)
